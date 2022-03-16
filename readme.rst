@@ -75,7 +75,7 @@ MSYS2 Packages:
     - mingw-w64-clang-x86_64-meson
     - mingw-w64-clang-x86_64-cmake
 
-Install the packaged mentioned above with the following command::
+Install the packages mentioned above with the following command::
 
     pacman -S mingw-w64-clang-x86_64-meson mingw-w64-clang-x86_64-cmake
 
