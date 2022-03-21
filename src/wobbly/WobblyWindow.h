@@ -23,6 +23,7 @@ SOFTWARE.
 
 
 #include <QCheckBox>
+#include <QRadioButton>
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QGroupBox>
@@ -169,6 +170,9 @@ private:
     QSpinBox *settings_cache_spin;
     QCheckBox *settings_print_details_check;
     QCheckBox *settings_bookmark_description_check;
+    QRadioButton *settings_auto_selectevery_deleteframes;
+    QRadioButton *settings_force_selectevery;
+    QRadioButton *settings_force_deleteframes;
     SpinBox *settings_num_thumbnails_spin;
     QDoubleSpinBox *settings_thumbnail_size_dspin;
     TableWidget *settings_shortcuts_table;

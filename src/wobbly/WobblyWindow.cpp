@@ -67,6 +67,9 @@ SOFTWARE.
 
 #define KEY_COMPACT_PROJECT_FILES           QStringLiteral("projects/compact_project_files")
 #define KEY_USE_RELATIVE_PATHS              QStringLiteral("projects/use_relative_paths")
+#define KEY_AUTO_SELECTEVERY_DELETEFRAMES   QStringLiteral("projects/auto_selectevery_deleteframes")
+#define KEY_FORCE_SELECTEVERY               QStringLiteral("projects/force_selectevery")
+#define KEY_FORCE_DELETEFRAMES              QStringLiteral("projects/force_deleteframes")
 
 
 struct CallbackData {
@@ -184,6 +187,10 @@ void WobblyWindow::readSettings() {
     settings_use_relative_paths_check->setChecked(settings.value(KEY_USE_RELATIVE_PATHS, false).toBool());
 
     settings_bookmark_description_check->setChecked(settings.value(KEY_ASK_FOR_BOOKMARK_DESCRIPTION, true).toBool());
+
+    settings_auto_selectevery_deleteframes->setChecked(settings.value(KEY_AUTO_SELECTEVERY_DELETEFRAMES, true).toBool());
+    settings_force_selectevery->setChecked(settings.value(KEY_FORCE_SELECTEVERY, false).toBool());
+    settings_force_deleteframes->setChecked(settings.value(KEY_FORCE_DELETEFRAMES, false).toBool());
 
     /// Why is it that the default values for some of these settings are kept in this function,
     /// but for others they are kept in createSettingsWindow ?
@@ -2621,6 +2628,10 @@ void WobblyWindow::createSettingsWindow() {
 
     settings_bookmark_description_check = new QCheckBox(QStringLiteral("Ask for bookmark description"));
 
+    settings_auto_selectevery_deleteframes = new QRadioButton(QStringLiteral("Automatically pick SelectEvery or DeleteFrames for script output decimation"));
+    settings_force_selectevery = new QRadioButton(QStringLiteral("Force script output decimation to SelectEvery"));
+    settings_force_deleteframes = new QRadioButton(QStringLiteral("Force script output decimation to DeleteFrames"));
+
     settings_font_spin = new QSpinBox;
     settings_font_spin->setRange(4, 99);
 
@@ -2673,6 +2684,16 @@ void WobblyWindow::createSettingsWindow() {
 
     connect(settings_bookmark_description_check, &QCheckBox::toggled, [this] (bool checked) {
         settings.setValue(KEY_ASK_FOR_BOOKMARK_DESCRIPTION, checked);
+    });
+
+    connect(settings_auto_selectevery_deleteframes, &QRadioButton::toggled, [this] (bool checked) {
+        settings.setValue(KEY_AUTO_SELECTEVERY_DELETEFRAMES, checked);
+    });
+    connect(settings_force_selectevery, &QRadioButton::toggled, [this] (bool checked) {
+        settings.setValue(KEY_FORCE_SELECTEVERY, checked);
+    });
+    connect(settings_force_deleteframes, &QRadioButton::toggled, [this] (bool checked) {
+        settings.setValue(KEY_FORCE_DELETEFRAMES, checked);
     });
 
     connect(settings_font_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this] (int value) {
@@ -2811,6 +2832,9 @@ void WobblyWindow::createSettingsWindow() {
     form->addRow(settings_use_relative_paths_check);
     form->addRow(settings_print_details_check);
     form->addRow(settings_bookmark_description_check);
+    form->addRow(settings_auto_selectevery_deleteframes);
+    form->addRow(settings_force_selectevery);
+    form->addRow(settings_force_deleteframes);
     form->addRow(QStringLiteral("Font size"), settings_font_spin);
     form->addRow(QStringLiteral("Colormatrix"), settings_colormatrix_combo);
     form->addRow(QStringLiteral("Maximum cache size"), settings_cache_spin);
@@ -3859,7 +3883,7 @@ void WobblyWindow::realSaveScript(const QString &path) {
     // The currently selected preset might not have been stored in the project yet.
     presetEdited();
 
-    std::string script = project->generateFinalScript(false);
+    std::string script = project->generateFinalScript(false, settings_force_selectevery->isChecked(), settings_force_deleteframes->isChecked());
 
     QFile file(path);
 

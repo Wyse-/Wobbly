@@ -350,12 +350,12 @@ class WobblyProject : public QObject {
         void trimToScript(std::string &script) const;
         void fieldHintToScript(std::string &script) const;
         void freezeFramesToScript(std::string &script) const;
-        void decimatedFramesToScript(std::string &script) const;
+        void decimatedFramesToScript(std::string &script, bool force_selectevery, bool force_deleteframes) const;
         void cropToScript(std::string &script) const;
         void resizeAndBitDepthToScript(std::string &script, bool resize_enabled, bool depth_enabled) const;
         void setOutputToScript(std::string &script) const;
 
-        std::string generateFinalScript(bool save_source_node = true) const;
+        std::string generateFinalScript(bool save_source_node = true, bool force_selectevery = false, bool force_deleteframes = false) const;
         std::string generateMainDisplayScript() const;
 
         std::string generateTimecodesV1() const;
