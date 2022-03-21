@@ -1934,6 +1934,9 @@ void WobblyWindow::createFrameRatesViewer() {
         if (ok)
             requestFrames(frame);
     });
+    frame_rates_buttons->button(2)->setChecked(true);
+    frame_rates_buttons->button(3)->setChecked(true);
+    frame_rates_buttons->button(4)->setChecked(true);
 
 
     QHBoxLayout *hbox = new QHBoxLayout;

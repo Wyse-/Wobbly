@@ -177,7 +177,7 @@ WobblyProject::WobblyProject(bool _is_wobbly)
     , height(0)
     , zoom(1)
     , last_visited_frame(0)
-    , shown_frame_rates{ false, false, false, false, false }
+    , shown_frame_rates{ false, false, true, true, true }
     , mic_search_minimum(20)
     , c_match_sequences_minimum(20)
     , is_wobbly(_is_wobbly)
