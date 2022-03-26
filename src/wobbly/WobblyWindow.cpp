@@ -36,6 +36,7 @@ SOFTWARE.
 #include <QStatusBar>
 #include <QTabWidget>
 #include <QThread>
+#include <QClipboard>
 
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -493,7 +494,10 @@ void WobblyWindow::createShortcuts() {
         { "", "",                   "Assign selected preset to the current section", &WobblyWindow::assignSelectedPresetToCurrentSection },
         { "", "Z",                  "Select the previous custom list", &WobblyWindow::selectPreviousCustomList },
         { "", "X",                  "Select the next custom list", &WobblyWindow::selectNextCustomList },
-        { "", "C",                  "Add range to the selected custom list", &WobblyWindow::addRangeToSelectedCustomList }
+        { "", "C",                  "Add range to the selected custom list", &WobblyWindow::addRangeToSelectedCustomList },
+
+        { "", "Ctrl+C",             "Copy current frame number to clipboard", &WobblyWindow::copyCurrentFrameNumberToClipboard },
+        { "", "Alt+C",              "Copy current frame image to clipboard", &WobblyWindow::copyCurrentFrameImageToClipboard }
     };
 
     resetShortcuts();
@@ -5628,6 +5632,26 @@ void WobblyWindow::addRangeToSelectedCustomList() {
 
             togglePreview();
         }
+    }
+}
+
+
+void WobblyWindow::copyCurrentFrameNumberToClipboard() {
+    if(project != nullptr) {
+        QClipboard *clipboard = QGuiApplication::clipboard();
+        if(preview) {
+            clipboard->setText(QString::number(project->frameNumberAfterDecimation(current_frame)));
+        } else {
+            clipboard->setText(QString::number(current_frame));
+        }
+    }
+}
+
+
+void WobblyWindow::copyCurrentFrameImageToClipboard() {
+    if(project != nullptr) {
+        QClipboard *clipboard = QGuiApplication::clipboard();
+        clipboard->setPixmap(*frame_label->pixmap());
     }
 }
 
