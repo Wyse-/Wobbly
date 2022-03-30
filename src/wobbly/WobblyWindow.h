@@ -223,6 +223,9 @@ private:
 
     QSettings settings;
 
+    int original_frame_width;
+    int original_frame_height;
+
 
     // VapourSynth stuff.
 
