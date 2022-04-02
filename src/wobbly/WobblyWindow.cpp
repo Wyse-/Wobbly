@@ -101,7 +101,7 @@ WobblyWindow::WobblyWindow()
     : QMainWindow()
     , import_window(nullptr)
     , splash_image(720, 480, QImage::Format_RGB32)
-    , window_title(QStringLiteral("Wobbly IVTC Assistant v%1 %2").arg(PACKAGE_VERSION, GIT_COMMIT_HASH))
+    , window_title(QStringLiteral("Wobbly IVTC Assistant v%1 %2").arg(PACKAGE_VERSION, GIT_COMMIT_HASH_ABBR))
     , project(nullptr)
     , current_frame(0)
     , pending_frame(0)
@@ -387,6 +387,9 @@ void WobblyWindow::createMenu() {
     connect(helpAbout, &QAction::triggered, [this] () {
         QMessageBox::about(this, QStringLiteral("About Wobbly"), QStringLiteral(
             "<a href='https://github.com/dubhater/Wobbly'>https://github.com/dubhater/Wobbly</a><br />"
+            "<a href='https://github.com/Wyse-/Wobbly'>https://github.com/Wyse-/Wobbly</a><br />"
+            "<br />"
+            "Built on commit <a href='https://github.com/Wyse-/Wobbly/commit/%1'>%1</a><br />"
             "<br />"
             "Copyright (c) 2015, John Smith<br />"
             "<br />"
@@ -402,7 +405,7 @@ void WobblyWindow::createMenu() {
             "WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, "
             "ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS "
             "SOFTWARE."
-        ));
+        ).arg(GIT_COMMIT_HASH_FULL));
     });
 
     connect(helpAboutQt, &QAction::triggered, [this] () {

@@ -323,7 +323,7 @@ void WibblyWindow::dropEvent(QDropEvent *event) {
 void WibblyWindow::createUI() {
     setAcceptDrops(true);
 
-    setWindowTitle(QStringLiteral("Wibbly Metrics Collector v%1 %2").arg(PACKAGE_VERSION, GIT_COMMIT_HASH));
+    setWindowTitle(QStringLiteral("Wibbly Metrics Collector v%1 %2").arg(PACKAGE_VERSION, GIT_COMMIT_HASH_ABBR));
 
     createMainWindow();
     createVideoOutputWindow();
@@ -358,6 +358,9 @@ void WibblyWindow::createMenus() {
     connect(helpAbout, &QAction::triggered, [this] () {
         QMessageBox::about(this, QStringLiteral("About Wibbly"), QStringLiteral(
             "<a href='https://github.com/dubhater/Wobbly'>https://github.com/dubhater/Wobbly</a><br />"
+            "<a href='https://github.com/Wyse-/Wobbly'>https://github.com/Wyse-/Wobbly</a><br />"
+            "<br />"
+            "Built on commit <a href='https://github.com/Wyse-/Wobbly/commit/%1'>%1</a><br />"
             "<br />"
             "Copyright (c) 2015, John Smith<br />"
             "<br />"
@@ -373,7 +376,7 @@ void WibblyWindow::createMenus() {
             "WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, "
             "ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS "
             "SOFTWARE."
-        ));
+        ).arg(GIT_COMMIT_HASH_FULL));
     });
 
     connect(helpAboutQt, &QAction::triggered, [this] () {
