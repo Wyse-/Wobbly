@@ -1,9 +1,10 @@
+GIT_COMMIT_HASH := "$(shell git describe --always --dirty --abbrev=5 --exclude '*')"
 warningflags = -Wall -Wextra -Wshadow
 includeflags = -I$(srcdir) -I$(srcdir)/src/shared
 commoncflags = $(FPIC) -O2 $(warningflags) $(includeflags)
 AM_CXXFLAGS = -std=c++11 $(commoncflags)
 AM_CFLAGS = -std=c99 $(commoncflags)
-AM_CPPFLAGS = $(QT5PLATFORMSUPPORT_CFLAGS) $(QT5WIDGETS_CFLAGS) $(VSSCRIPT_CFLAGS)
+AM_CPPFLAGS = $(QT5PLATFORMSUPPORT_CFLAGS) $(QT5WIDGETS_CFLAGS) $(VSSCRIPT_CFLAGS) -DGIT_COMMIT_HASH=\"$(GIT_COMMIT_HASH)\"
 AM_LDFLAGS = $(WINDOWS_SUBSYSTEM)
 
 

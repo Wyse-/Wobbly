@@ -323,7 +323,7 @@ void WibblyWindow::dropEvent(QDropEvent *event) {
 void WibblyWindow::createUI() {
     setAcceptDrops(true);
 
-    setWindowTitle(QStringLiteral("Wibbly Metrics Collector v%1").arg(PACKAGE_VERSION));
+    setWindowTitle(QStringLiteral("Wibbly Metrics Collector v%1 %2").arg(PACKAGE_VERSION, GIT_COMMIT_HASH));
 
     createMainWindow();
     createVideoOutputWindow();
