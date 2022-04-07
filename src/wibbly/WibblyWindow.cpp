@@ -51,6 +51,7 @@ SOFTWARE.
 #define KEY_MAXIMUM_CACHE_SIZE              QStringLiteral("user_interface/maximum_cache_size")
 #define KEY_LAST_DIR                        QStringLiteral("user_interface/last_dir")
 #define KEY_LAST_CROP                       QStringLiteral("user_interface/last_crop")
+#define KEY_IGNORE_DGDECNV_PLUGIN           QStringLiteral("user_interface/ignore_dgdecnv_plugin")
 
 #define KEY_COMPACT_PROJECT_FILES           QStringLiteral("projects/compact_project_files")
 #define KEY_USE_RELATIVE_PATHS              QStringLiteral("projects/use_relative_paths")
@@ -103,6 +104,8 @@ WibblyWindow::WibblyWindow()
 {
     createUI();
 
+    readSettings();
+
     try {
         initialiseVapourSynth();
 
@@ -111,8 +114,6 @@ WibblyWindow::WibblyWindow()
         show();
         errorPopup(e.what());
     }
-
-    readSettings();
 
     readJobs();
 }
@@ -257,9 +258,11 @@ void WibblyWindow::checkRequiredFilters() {
     for (size_t i = 0; i < plugins.size(); i++) {
         VSPlugin *plugin = vsapi->getPluginById(plugins[i].id.c_str(), vscore);
         if (!plugin) {
-            error += "Fatal error: ";
-            error += plugins[i].plugin_not_found;
-            error += "\n";
+            if(!(plugins[i].id.compare(std::string("com.vapoursynth.dgdecodenv")) == 0 && settings_ignore_dgdecnv_plugin_check->isChecked())) {
+                error += "Fatal error: ";
+                error += plugins[i].plugin_not_found;
+                error += "\n";
+            }
         } else {
             VSMap *map = vsapi->getFunctions(plugin);
             for (auto it = plugins[i].filters.cbegin(); it != plugins[i].filters.cend(); it++) {
@@ -1162,6 +1165,8 @@ void WibblyWindow::createSettingsWindow() {
 
     settings_use_relative_paths_check = new QCheckBox(QStringLiteral("Use relative paths in project files"));
 
+    settings_ignore_dgdecnv_plugin_check = new QCheckBox(QStringLiteral("Skip DGDecNV plugin check"));
+
     settings_cache_spin = new QSpinBox;
     settings_cache_spin->setRange(1, 99999);
     settings_cache_spin->setValue(200);
@@ -1185,6 +1190,10 @@ void WibblyWindow::createSettingsWindow() {
         settings.setValue(KEY_USE_RELATIVE_PATHS, checked);
     });
 
+    connect(settings_ignore_dgdecnv_plugin_check, &QCheckBox::clicked, [this] (bool checked) {
+        settings.setValue(KEY_IGNORE_DGDECNV_PLUGIN, checked);
+    });
+
     connect(settings_cache_spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this] (int value) {
         settings.setValue(KEY_MAXIMUM_CACHE_SIZE, value);
     });
@@ -1199,6 +1208,11 @@ void WibblyWindow::createSettingsWindow() {
 
     hbox = new QHBoxLayout;
     hbox->addWidget(settings_compact_projects_check);
+    hbox->addStretch(1);
+    vbox->addLayout(hbox);
+
+    hbox = new QHBoxLayout;
+    hbox->addWidget(settings_ignore_dgdecnv_plugin_check);
     hbox->addStretch(1);
     vbox->addLayout(hbox);
 
@@ -1681,6 +1695,8 @@ void WibblyWindow::readSettings() {
     settings_compact_projects_check->setChecked(settings.value(KEY_COMPACT_PROJECT_FILES, false).toBool());
 
     settings_use_relative_paths_check->setChecked(settings.value(KEY_USE_RELATIVE_PATHS, false).toBool());
+
+    settings_ignore_dgdecnv_plugin_check->setChecked(settings.value(KEY_IGNORE_DGDECNV_PLUGIN, false).toBool());
 
     if (settings.contains(KEY_MAXIMUM_CACHE_SIZE))
         settings_cache_spin->setValue(settings.value(KEY_MAXIMUM_CACHE_SIZE).toInt());

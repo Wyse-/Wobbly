@@ -101,6 +101,7 @@ class WibblyWindow : public QMainWindow
     QCheckBox *settings_use_relative_paths_check;
     QSpinBox *settings_cache_spin;
     int settings_last_crop[4];
+    QCheckBox *settings_ignore_dgdecnv_plugin_check;
 
 
     // VapourSynth stuff.
