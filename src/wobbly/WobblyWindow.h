@@ -170,6 +170,7 @@ private:
     QSpinBox *settings_cache_spin;
     QCheckBox *settings_print_details_check;
     QCheckBox *settings_bookmark_description_check;
+    QCheckBox *settings_ignore_dgdecnv_plugin_check;
     QRadioButton *settings_auto_selectevery_deleteframes;
     QRadioButton *settings_force_selectevery;
     QRadioButton *settings_force_deleteframes;

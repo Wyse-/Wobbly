@@ -57,6 +57,7 @@ SOFTWARE.
 #define KEY_GEOMETRY                        QStringLiteral("user_interface/geometry")
 #define KEY_FONT_SIZE                       QStringLiteral("user_interface/font_size")
 #define KEY_ASK_FOR_BOOKMARK_DESCRIPTION    QStringLiteral("user_interface/ask_for_bookmark_description")
+#define KEY_IGNORE_DGDECNV_PLUGIN           QStringLiteral("user_interface/ignore_dgdecnv_plugin")
 #define KEY_COLORMATRIX                     QStringLiteral("user_interface/colormatrix")
 #define KEY_MAXIMUM_CACHE_SIZE              QStringLiteral("user_interface/maximum_cache_size")
 #define KEY_PRINT_DETAILS_ON_VIDEO          QStringLiteral("user_interface/print_details_on_video")
@@ -188,6 +189,8 @@ void WobblyWindow::readSettings() {
     settings_use_relative_paths_check->setChecked(settings.value(KEY_USE_RELATIVE_PATHS, false).toBool());
 
     settings_bookmark_description_check->setChecked(settings.value(KEY_ASK_FOR_BOOKMARK_DESCRIPTION, true).toBool());
+    
+    settings_ignore_dgdecnv_plugin_check->setChecked(settings.value(KEY_IGNORE_DGDECNV_PLUGIN, false).toBool());
 
     settings_auto_selectevery_deleteframes->setChecked(settings.value(KEY_AUTO_SELECTEVERY_DELETEFRAMES, true).toBool());
     settings_force_selectevery->setChecked(settings.value(KEY_FORCE_SELECTEVERY, false).toBool());
@@ -2638,6 +2641,8 @@ void WobblyWindow::createSettingsWindow() {
     settings_print_details_check = new QCheckBox(QStringLiteral("Print frame details on top of the video"));
 
     settings_bookmark_description_check = new QCheckBox(QStringLiteral("Ask for bookmark description"));
+    
+    settings_ignore_dgdecnv_plugin_check = new QCheckBox(QStringLiteral("Skip DGDecNV plugin check"));
 
     settings_auto_selectevery_deleteframes = new QRadioButton(QStringLiteral("Automatically pick SelectEvery or DeleteFrames for script output decimation"));
     settings_force_selectevery = new QRadioButton(QStringLiteral("Force script output decimation to SelectEvery"));
@@ -2695,6 +2700,10 @@ void WobblyWindow::createSettingsWindow() {
 
     connect(settings_bookmark_description_check, &QCheckBox::toggled, [this] (bool checked) {
         settings.setValue(KEY_ASK_FOR_BOOKMARK_DESCRIPTION, checked);
+    });
+
+    connect(settings_ignore_dgdecnv_plugin_check, &QCheckBox::toggled, [this] (bool checked) {
+        settings.setValue(KEY_IGNORE_DGDECNV_PLUGIN, checked);
     });
 
     connect(settings_auto_selectevery_deleteframes, &QRadioButton::toggled, [this] (bool checked) {
@@ -2843,6 +2852,7 @@ void WobblyWindow::createSettingsWindow() {
     form->addRow(settings_use_relative_paths_check);
     form->addRow(settings_print_details_check);
     form->addRow(settings_bookmark_description_check);
+    form->addRow(settings_ignore_dgdecnv_plugin_check);
     form->addRow(settings_auto_selectevery_deleteframes);
     form->addRow(settings_force_selectevery);
     form->addRow(settings_force_deleteframes);
@@ -3220,9 +3230,11 @@ void WobblyWindow::checkRequiredFilters() {
     for (size_t i = 0; i < plugins.size(); i++) {
         VSPlugin *plugin = vsapi->getPluginById(plugins[i].id.c_str(), vscore);
         if (!plugin) {
-            error += "Fatal error: ";
-            error += plugins[i].plugin_not_found;
-            error += "\n";
+            if(!(plugins[i].id.compare(std::string("com.vapoursynth.dgdecodenv")) == 0 && settings_ignore_dgdecnv_plugin_check->isChecked())) {
+                error += "Fatal error: ";
+                error += plugins[i].plugin_not_found;
+                error += "\n";
+            }
         } else {
             VSMap *map = vsapi->getFunctions(plugin);
             for (auto it = plugins[i].filters.cbegin(); it != plugins[i].filters.cend(); it++) {
