@@ -25,34 +25,39 @@ The usual steps work::
     make
 
 
-Compilation (Windows)
-=====================
+Compilation (Windows) - gcc
+===========================
 
-Compilation on Windows is possible by using clang via MSYS2 64 bit. I have also included a packaging script to create a 7z archive with all the needed folders and DLLs.
+Compilation on Windows is possible by using gcc via MSYS2 64 bit. I have also included a packaging script to create a 7z archive with all the needed folders and DLLs.
 
 Requirements:
     - MSYS2 x86_64
+    - VapourSynth R57 x86_64
 
 MSYS2 Packages:
-    - autoconf-wrapper
-    - automake-wrapper
+    - autoconf
+    - automake
     - git
     - p7zip
     - libtool
     - make
     - pkg-config
-    - mingw-w64-clang-x86_64-vapoursynth
-    - mingw-w64-clang-x86_64-qt5-base
-    - mingw-w64-clang-x86_64-clang
+    - mingw-w64-x86_64-vapoursynth
+    - mingw-w64-x86_64-qt5-base
+    - mingw-w64-x86_64-gcc
 
 Follow these steps to setup your build environment on Windows:
 
 1. Install MSYS2 64 bit
-2. Start the MSYS2 shell via the provided "MSYS2 MinGW Clang x64" shortcut
+2. Start the MSYS2 shell via the provided "MSYS2 MinGW x64" shortcut
+
+Update the pacman package repositories by running this command::
+    
+    pacman -Syy
 
 Then, execute the following command to install all build and packaging dependencies::
     
-    pacman -S autoconf-wrapper automake-wrapper git p7zip libtool make pkg-config mingw-w64-clang-x86_64-vapoursynth mingw-w64-clang-x86_64-qt5-base mingw-w64-clang-x86_64-clang
+    pacman -S autoconf automake git p7zip libtool make pkg-config mingw-w64-x86_64-vapoursynth mingw-w64-x86_64-qt5-base mingw-w64-x86_64-gcc
 
 You can now follow the usual steps to clone the repo, compile, and use the script I provided for packaging at the end, if you wish::
 
@@ -65,30 +70,14 @@ You can now follow the usual steps to clone the repo, compile, and use the scrip
 
 This will create a 7z archive of the built executables with all DLLs and required folders.
 
+Compilation (Windows) - Clang
+=============================
 
-LibP2P Compilation (Windows)
-============================
-As this build does not work with the LibP2P version which is shipped with vsrepo, you may need to compile your own, which you can accomplish in the same MSYS2 build environment used to compile wobbly.
-To compile LibP2P, you will need to install a few extra MSYS2 packages.
+Compiling via gcc is generally recommended, but if any issues arise you can alternatively compile with Clang. Clang compilation instructions for Windows are available in the "doc" folder of this repository:
+https://github.com/Wyse-/Wobbly/blob/master/doc/windows_clang_compilation.rst.
 
-MSYS2 Packages:
-    - mingw-w64-clang-x86_64-meson
-    - mingw-w64-clang-x86_64-cmake
-
-Install the packages mentioned above with the following command::
-
-    pacman -S mingw-w64-clang-x86_64-meson mingw-w64-clang-x86_64-cmake
-
-Once that is done, you can clone the LibP2P repo and proceed with the usual meson based build process::
-    
-    git clone https://github.com/DJATOM/LibP2P-Vapoursynth.git
-    cd LibP2P-Vapoursynth/
-    meson build
-    cd build/
-    ninja
-
-This will produce a clang compiled LibP2P.dll, which you can use with this specific wobbly build. Note that this clang compiled LibP2P DLL may not work with other wobbly versions.
-
+Keep in mind that when building with Clang, the produced executables will not be compatible with the LibP2P.dll provided by vsrepo, therefore you will have to either build your own with Clang or use a precompiled version:
+https://github.com/Wyse-/Wobbly/releases/download/v6.0.1-beta/LibP2P.dll.
 
 License
 =======
